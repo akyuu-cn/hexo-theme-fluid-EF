@@ -18,7 +18,8 @@ Fluid.plugins = {
       ],
       cursorChar: CONFIG.typing.cursorChar,
       typeSpeed : CONFIG.typing.typeSpeed,
-      loop      : CONFIG.typing.loop
+      loop      : CONFIG.typing.loop,
+      autoInsertCss: CONFIG.typing.autoInsertCss
     });
     typed.stop();
     var subtitle = document.getElementById('subtitle');
@@ -160,5 +161,15 @@ Fluid.plugins = {
         });
       }
     });
+  },
+  jParallax: function(){
+		$(document).ready(function(){
+			// Declare parallax on layers
+			$('.jparallax-layout').parallax({
+				mouseport: $(".jparallax-viewport")
+			});
+		});
+	
   }
+
 };

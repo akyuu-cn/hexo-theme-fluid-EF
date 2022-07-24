@@ -1,0 +1,42 @@
+<% 
+    var parallaxImages=((function(){
+        if(page.banner_img_parallax){return page.banner_img_parallax;}
+        else if(!(is_home() && page.banner_img)){return [{"source": page.banner_img, "size": theme.banner.parallax.images[0].size || '120%'}];}
+        else if(theme.banner.parallax.images){return theme.banner.parallax.images;}
+        else{return [{"source": theme.index.banner_img, "size": '120%'}];}
+    })());
+    var jParallaxArg=new String();
+    parallaxImages.forEach(function(imgObject){
+        jParallaxArg+=', {';
+        if((imgObject.yparallax || 'auto') != 'auto'){
+            jParallaxArg+=`yparallax: "${imgObject.yparallax}"` ;
+        }
+        if((imgObject.xparallax || 'auto') != 'auto'){
+            jParallaxArg+=`, xparallax: "${imgObject.xparallax}"` ;
+        }
+        jParallaxArg+=" }";
+    });
+    import_script(`<script type="text/javascript" src="${ theme.static_prefix.internal_js + '/jquery.parallax.js'}"></script>
+<script type="text/javascript">var firstScroll=false;
+var mobile=(function(){
+    var info = navigator.userAgent
+    var isPhone = /mobile/i.test(info)
+    return isPhone
+})();
+$(window).resize(function () { 
+    if(!mobile){
+        var element=$('.jparallax-layer');
+        element.unparallax();
+        element.css('top', 'auto');
+        element.css('margin-top', 'auto');
+        element.css('left', 'auto');
+        element.css('margin-left', 'auto');
+        element.parallax({} ${jParallaxArg});
+    }
+});
+// 因为 banner 的位置本就在 import_script 函数注入的 HTML 代码之前
+// 所以这里不用 $(window).load。
+if(!mobile){
+    $('.jparallax-layer').parallax({} ${jParallaxArg});
+}</script>`);
+%>
