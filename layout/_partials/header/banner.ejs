@@ -3,25 +3,69 @@ var banner_img_height = parseFloat(page.banner_img_height || theme.index.banner_
 var banner_mask_alpha = parseFloat(page.banner_mask_alpha || theme.index.banner_mask_alpha)
 var subtitle = page.subtitle || page.title
 %>
-<% if(theme.banner.parallax.enable && in_scope(theme.banner.parallax.scope)) { %>
+<% if(theme.banner.parallax.enable) { %>
 <%
 
 var parallaxImages=((function(){
-  if(page.banner_img_parallax){return page.banner_img_parallax;}
-  else if(!(is_home() && page.banner_img)){return [{"source": page.banner_img, "size": theme.banner.parallax.images[0].size || '120%'}];}
-  else if(theme.banner.parallax.images){return theme.banner.parallax.images;}
-  else{return [{"source": theme.index.banner_img, "size": '120%'}];}
+      // console.log("is_home: " + is_home())
+      // console.log("page.banner_img_parallax: " + page.banner_img_parallax)
+      // console.log(page.banner_img)
+      // console.log(theme.index.banner_img)
+      // console.log(page.banner_img_parallax)
+
+  if(is_home()){ //如果是主页，优先使用主页parallax中的设置
+    if(theme.banner.parallax.images){
+      return theme.banner.parallax.images
+    } else {
+      return theme.index.banner_img
+    }
+  }else{ //如果是非主页，根据页面配置决定显示的banner
+  if(page.banner_img_parallax!=undefined){
+    return page.banner_img_parallax
+  } else if (page.banner_img!=theme.index.banner_img){
+    return [{"source": page.banner_img, "size": theme.banner.parallax.images[0].size || '120%'}]
+  } else {
+    return theme.banner.parallax.images
+  }
+  }
+
+  // if(page.banner_img_parallax){
+  //   console.log('0');return page.banner_img_parallax;
+  // }else if ()
+
+  // else if(!(is_home() == (page.banner_img_parallax!=undefined))){
+  //   console.log('1');return [{"source": page.banner_img, "size": theme.banner.parallax.images[0].size || '120%'}];
+  // }
+  // else if(theme.banner.parallax.images){
+  //   console.log('2');return theme.banner.parallax.images;
+  // }
+  // else{
+  //   console.log('3');return [{"source": theme.index.banner_img, "size": '120%'}];
+
+
 })());
 %>
+
 <div id="banner" class="banner" <%- theme.banner && theme.banner.parallax_scrolling && 'parallax=true' %>>
   <div class="full-bg-img text-center">
   <% parallaxImages.forEach(function (imgObject,n){ %>
+
+  <%
+    var imgH = '100%'
+    var imgW = '100%'
+    if (in_scope(theme.banner.parallax.scope) || page.banner_img_parallax!=undefined){
+      imgH = imgObject.size
+      imgW = imgObject.size
+    }
+  
+  %>
+
     <% if(n!=parallaxImages.length-1){ %>
     <div class="jparallax-layer" 
-      style="background-image: url('<%- imgObject.source %>');height:<%= imgObject.size %>; width:<%= imgObject.size %>;"></div>
+      style="background-image: url('<%- imgObject.source %>');height:<%= imgH %>; width:<%= imgW %>;"></div>
   <% } else { %> 
     <div class="jparallax-layer" 
-      style="background-image: url('<%- imgObject.source %>');height:<%= imgObject.size %>; width:<%= imgObject.size %>;"></div>
+      style="background-image: url('<%- imgObject.source %>');height:<%= imgH %>; width:<%= imgW %>;"></div>
       
         <div class="mask flex-center" style="background-color: rgba(0, 0, 0, <%= parseFloat(banner_mask_alpha) %>)">
           <div class="banner-text text-center fade-in-up">
